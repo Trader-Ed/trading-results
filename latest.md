@@ -1,60 +1,168 @@
-# Signal test, new default rulebook, 2026-01-02 to 2026-10-23 (run 2026-10-27)
+# T6, ATR pick, 2026-06-01 to 2026-10-23, $2,500 equity (run 2026-10-27)
 
-Do the entry signals point the right way? For every signal from the rules (new default: entries 9:35 to
-11:50, squeeze rule only before 10:00, VWAP warm-up to 10:00), the stock's move in the signal's direction
-is compared with the same number of random entries (random direction) on the same days and names, in the
-same window. Options, exits and slippage are not involved: this measures the stock only.
+All four start from the new default rulebook (partner decision 2026-10-27): entries from 9:35, squeeze
+rule only before 10:00, regular (pullback) rules from 10:00, VWAP warm-up to 10:00, 2% slippage per side.
 
-**Reading it.** At these sample sizes, a group's average move has a noise band of roughly +/-0.06 to
-+/-0.19 percentage points (ATR pick) and +/-0.02 to +/-0.05 (SPY), two standard errors, and its share
-in favour roughly +/-9 to +/-14 points around 50%. Every signal group, on both runs and at every horizon,
-is inside that band: neither the squeeze nor the pullback signals move the stock our way more often or
-further than random entries do over this period.
+- **New default**: as above.
+- **(a)**: squeeze rule only, all morning (no pullback entries at all).
+- **(b)**: as (a), with the squeeze trailing stop at 30% instead of 20%.
+- **(c)**: pullback entries only when the day's name is QQQ or TSLA; squeeze on every name.
 
-| Run | Group | Count | Avg 10m (+/- 2 s.e.) | In favour 10m | Avg 30m (+/- 2 s.e.) | In favour 30m |
+| Variant | Trades | Win rate | Avg win | Avg loss | Total P&L | P&L/trade | Best day | Worst day |
+|---|---|---|---|---|---|---|---|---|
+| New default | 83 | 38.6% | $36.80 | $-30.80 | $-393.07 | $-4.74 | +13.8% ($+346.00) | -8.1% ($-201.91) |
+| (a) squeeze only | 42 | 35.7% | $46.61 | $-27.32 | $-38.41 | $-0.91 | +13.8% ($+346.00) | -3.0% ($-74.22) |
+| (b) squeeze only, 30% trail | 41 | 34.1% | $98.94 | $-39.25 | $+325.22 | $+7.93 | +13.8% ($+346.00) | -4.7% ($-118.10) |
+| (c) pullback only on QQQ, TSLA | 74 | 40.5% | $38.58 | $-26.80 | $-21.72 | $-0.29 | +13.8% ($+346.00) | -3.8% ($-96.13) |
+
+### By setup, all runs
+
+| Variant | Pullback: trades | win rate | P&L | Squeeze: trades | win rate | P&L |
 |---|---|---|---|---|---|---|
-| ATR pick | squeeze | 69 | -0.001% +/-0.085 | 51% +/-12 | +0.066% +/-0.191 | 55% +/-12 |
-| ATR pick | pullback | 64 | -0.005% +/-0.088 | 48% +/-12 | -0.008% +/-0.096 | 52% +/-12 |
-| ATR pick | all signals | 133 | -0.003% +/-0.061 | 50% +/-9 | +0.030% +/-0.109 | 53% +/-9 |
-| ATR pick | control | 133 | +0.032% +/-0.064 | 45% +/-9 | -0.001% +/-0.095 | 43% +/-9 |
-| SPY | squeeze | 50 | -0.001% +/-0.036 | 54% +/-14 | -0.024% +/-0.052 | 46% +/-14 |
-| SPY | pullback | 73 | -0.014% +/-0.024 | 47% +/-12 | -0.022% +/-0.032 | 52% +/-12 |
-| SPY | all signals | 123 | -0.009% +/-0.020 | 50% +/-9 | -0.023% +/-0.028 | 50% +/-9 |
-| SPY | control | 123 | -0.007% +/-0.022 | 51% +/-9 | -0.008% +/-0.037 | 55% +/-9 |
+| New default | 42 | 40.5% | $-412.58 | 41 | 36.6% | $+19.51 |
+| (a) squeeze only | 0 | - | $+0.00 | 42 | 35.7% | $-38.41 |
+| (b) squeeze only, 30% trail | 0 | - | $+0.00 | 41 | 34.1% | $+325.22 |
+| (c) pullback only on QQQ, TSLA | 33 | 45.5% | $-41.23 | 41 | 36.6% | $+19.51 |
 
-## Signal test, ATR pick, 2026-01-02 to 2026-10-23
+### How much rides on one trade
 
-ATR pick, 2026-01-02 to 2026-10-23, rulebook rulebook.yaml: entry window 09:35 to 11:50, squeeze rule only before 10:00, VWAP warm-up 30 min.
+One squeeze trade, QQQ on 2026-09-03 (+$346.00, closed at the noon shutdown), is in all four runs.
+Without it every variant loses money:
 
-Moves are the stock's move in the signal's direction (up for long, down for short), as a percent of the signal bar's close, at +5, +10 and +30 minutes after that bar closes; best and worst are the most favourable and most adverse move within 10 minutes. Repeats of the same setup and side within 5 minutes are skipped. The control group has one random entry time per signal, on the same day and name and in the same entry window, with a random direction (seed 7). Days with signals: 94.
+| Variant | Total P&L | Without that trade | Without the best 3 trades |
+|---|---|---|---|
+| New default | $-393.07 | $-739.07 | $-959.70 |
+| (a) squeeze only | $-38.41 | $-384.41 | $-506.04 |
+| (b) squeeze only, 30% trail | $+325.22 | $-20.78 | $-435.03 |
+| (c) pullback only on QQQ, TSLA | $-21.72 | $-367.72 | $-588.35 |
 
-| Group | Count | Avg 5m | Avg 10m | Avg 30m | Avg best 10m | Avg worst 10m | In favour 5m | In favour 10m | In favour 30m |
+## New default
+
+### Summary
+
+| Trades | Win rate | Avg win | Avg loss | Total P&L | P&L/trade | Best trade | Worst trade | Best day | Worst day |
 |---|---|---|---|---|---|---|---|---|---|
-| squeeze (all) | 69 | -0.011% | -0.001% | +0.066% | +0.235% | -0.239% | 53.6% | 50.7% | 55.1% |
-| squeeze long | 39 | +0.004% | +0.029% | +0.117% | +0.250% | -0.225% | 59.0% | 53.8% | 53.8% |
-| squeeze short | 30 | -0.031% | -0.041% | -0.002% | +0.214% | -0.257% | 46.7% | 46.7% | 56.7% |
-| pullback (all) | 64 | -0.010% | -0.005% | -0.008% | +0.213% | -0.222% | 50.0% | 48.4% | 51.6% |
-| pullback long | 36 | -0.013% | -0.018% | -0.008% | +0.192% | -0.210% | 47.2% | 47.2% | 50.0% |
-| pullback short | 28 | -0.005% | +0.013% | -0.007% | +0.239% | -0.239% | 53.6% | 50.0% | 53.6% |
-| all signals | 133 | -0.010% | -0.003% | +0.030% | +0.224% | -0.231% | 51.9% | 49.6% | 53.4% |
-| control (random) | 133 | +0.027% | +0.032% | -0.001% | +0.244% | -0.218% | 49.6% | 45.1% | 42.9% |
+| 83 | 38.6% | $+36.80 | $-30.80 | $-393.07 | $-4.74 | $+346.00 | $-96.24 | $+346.00 | $-201.91 |
 
-## Signal test, every day SPY, 2026-01-02 to 2026-10-23
+### By setup
 
-every day SPY, 2026-01-02 to 2026-10-23, rulebook rulebook.yaml: entry window 09:35 to 11:50, squeeze rule only before 10:00, VWAP warm-up 30 min.
+| Setup | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| squeeze | 41 | 36.6% | $+19.51 | $+0.48 |
+| pullback | 42 | 40.5% | $-412.58 | $-9.82 |
 
-Moves are the stock's move in the signal's direction (up for long, down for short), as a percent of the signal bar's close, at +5, +10 and +30 minutes after that bar closes; best and worst are the most favourable and most adverse move within 10 minutes. Repeats of the same setup and side within 5 minutes are skipped. The control group has one random entry time per signal, on the same day and name and in the same entry window, with a random direction (seed 7). Days with signals: 93.
+### By underlying
 
-| Group | Count | Avg 5m | Avg 10m | Avg 30m | Avg best 10m | Avg worst 10m | In favour 5m | In favour 10m | In favour 30m |
+| Underlying | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| QQQ | 26 | 34.6% | $+123.39 | $+4.75 |
+| NVDA | 1 | 0.0% | $-36.35 | $-36.35 |
+| TSLA | 37 | 40.5% | $-60.79 | $-1.64 |
+| META | 19 | 42.1% | $-419.32 | $-22.07 |
+
+### By exit reason
+
+| Exit reason | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| noon_shutdown | 1 | 100.0% | $+346.00 | $+346.00 |
+| profit_target | 1 | 100.0% | $+146.22 | $+146.22 |
+| volume_faded | 30 | 53.3% | $+22.14 | $+0.74 |
+| setup_failed | 4 | 0.0% | $-136.44 | $-34.11 |
+| hard_stop | 6 | 0.0% | $-378.62 | $-63.10 |
+| trailing_stop | 41 | 34.1% | $-392.37 | $-9.57 |
+
+## (a) squeeze only
+
+### Summary
+
+| Trades | Win rate | Avg win | Avg loss | Total P&L | P&L/trade | Best trade | Worst trade | Best day | Worst day |
 |---|---|---|---|---|---|---|---|---|---|
-| squeeze (all) | 50 | -0.021% | -0.001% | -0.024% | +0.088% | -0.103% | 46.0% | 54.0% | 46.0% |
-| squeeze long | 25 | -0.010% | +0.015% | -0.018% | +0.084% | -0.090% | 52.0% | 64.0% | 48.0% |
-| squeeze short | 25 | -0.032% | -0.018% | -0.030% | +0.093% | -0.116% | 40.0% | 44.0% | 44.0% |
-| pullback (all) | 73 | -0.003% | -0.014% | -0.022% | +0.076% | -0.094% | 46.6% | 46.6% | 52.1% |
-| pullback long | 43 | -0.004% | -0.011% | -0.013% | +0.070% | -0.089% | 44.2% | 48.8% | 53.5% |
-| pullback short | 30 | -0.000% | -0.019% | -0.036% | +0.085% | -0.100% | 50.0% | 43.3% | 50.0% |
-| all signals | 123 | -0.010% | -0.009% | -0.023% | +0.081% | -0.097% | 46.3% | 49.6% | 49.6% |
-| control (random) | 123 | -0.001% | -0.007% | -0.008% | +0.088% | -0.092% | 52.0% | 51.2% | 55.3% |
+| 42 | 35.7% | $+46.61 | $-27.32 | $-38.41 | $-0.91 | $+346.00 | $-65.80 | $+346.00 | $-74.22 |
+
+### By setup
+
+| Setup | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| squeeze | 42 | 35.7% | $-38.41 | $-0.91 |
+
+### By underlying
+
+| Underlying | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| QQQ | 9 | 33.3% | $+231.24 | $+25.69 |
+| META | 11 | 54.5% | $-84.32 | $-7.67 |
+| TSLA | 22 | 27.3% | $-185.33 | $-8.42 |
+
+### By exit reason
+
+| Exit reason | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| noon_shutdown | 1 | 100.0% | $+346.00 | $+346.00 |
+| trailing_stop | 41 | 34.1% | $-384.41 | $-9.38 |
+
+## (b) squeeze only, 30% trail
+
+### Summary
+
+| Trades | Win rate | Avg win | Avg loss | Total P&L | P&L/trade | Best trade | Worst trade | Best day | Worst day |
+|---|---|---|---|---|---|---|---|---|---|
+| 41 | 34.1% | $+98.94 | $-39.25 | $+325.22 | $+7.93 | $+346.00 | $-95.20 | $+346.00 | $-118.10 |
+
+### By setup
+
+| Setup | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| squeeze | 41 | 34.1% | $+325.22 | $+7.93 |
+
+### By underlying
+
+| Underlying | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| QQQ | 8 | 62.5% | $+470.55 | $+58.82 |
+| META | 11 | 45.5% | $+182.90 | $+16.63 |
+| TSLA | 22 | 18.2% | $-328.23 | $-14.92 |
+
+### By exit reason
+
+| Exit reason | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| noon_shutdown | 6 | 83.3% | $+734.40 | $+122.40 |
+| trailing_stop | 35 | 25.7% | $-409.18 | $-11.69 |
+
+## (c) pullback only on QQQ, TSLA
+
+### Summary
+
+| Trades | Win rate | Avg win | Avg loss | Total P&L | P&L/trade | Best trade | Worst trade | Best day | Worst day |
+|---|---|---|---|---|---|---|---|---|---|
+| 74 | 40.5% | $+38.58 | $-26.80 | $-21.72 | $-0.29 | $+346.00 | $-65.88 | $+346.00 | $-96.13 |
+
+### By setup
+
+| Setup | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| squeeze | 41 | 36.6% | $+19.51 | $+0.48 |
+| pullback | 33 | 45.5% | $-41.23 | $-1.25 |
+
+### By underlying
+
+| Underlying | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| QQQ | 26 | 34.6% | $+123.39 | $+4.75 |
+| TSLA | 37 | 40.5% | $-60.79 | $-1.64 |
+| META | 11 | 54.5% | $-84.32 | $-7.67 |
+
+### By exit reason
+
+| Exit reason | Trades | Win rate | Total P&L | P&L/trade |
+|---|---|---|---|---|
+| noon_shutdown | 1 | 100.0% | $+346.00 | $+346.00 |
+| profit_target | 1 | 100.0% | $+146.22 | $+146.22 |
+| volume_faded | 25 | 56.0% | $+117.34 | $+4.69 |
+| setup_failed | 3 | 0.0% | $-77.70 | $-25.90 |
+| hard_stop | 3 | 0.0% | $-161.21 | $-53.74 |
+| trailing_stop | 41 | 34.1% | $-392.37 | $-9.57 |
+
 ---
 
-Full per-trade tables: [history/2026-10-27-signal-test.md](history/2026-10-27-signal-test.md)
+Full per-trade tables: [history/2026-10-27-t6.md](history/2026-10-27-t6.md)
