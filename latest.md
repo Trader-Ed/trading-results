@@ -1,65 +1,61 @@
-BENCH AUDIT: PROBLEM FOUND
+T17b OUTCOME: CANDIDATES FOUND
 
-# T17: bench audit, can the bench say yes? (2019-2023, all9; holdout untouched; rules unchanged)
+# T17b: the corrected pass bar for direction signal tests (partner decision, October 29)
 
-Run 2026-10-29.
+Run 2026-10-29. Nothing new was downloaded or tested: the T17 audit was re-run with the new bar, and the saved T10b and T11 signals (2019-2023) and T13 Part B's 2016-2018 re-runs were re-judged. Holdout untouched; rulebook.yaml unchanged.
+
+**New bar.** The 30-minute horizon decides (10 and 60 minutes reported, not required). The share moving our way beats the matched control by z >= 3, clustered by day, in all9, and spy's share gap has the same sign (no separate 3-SE test). At least 300 signals. The 30-minute share gap is positive in at least 4 of the 5 years.
 
 ## Findings
 
-- **The problem: the bench almost never says yes, even to a real edge.** None of the 180 planted sets passed, at any size or edge, including a 55% edge with 26,750 signals. The calculations are right (see the next three points), but the pass bar is too demanding for edges of this size.
-- **First reason: the 10-minute requirement.** A direction edge at +30 minutes shows up only partly at +10 minutes (about 51.5% vs 54.5% here), so the 10-minute z is about a third of the 30-minute z. At the median row size a 55% edge reaches z +5.0 at 30 minutes in all9, but only +1.8 at 10 minutes.
-- **Second reason: spy has to pass on its own, with a ninth of the signals.** At the median size spy has about 630 signals, so even its 30-minute z averages only +1.9 for a 55% edge. With 26,750 signals in all9, all9 met the bar in 19 of 20 repeats at 55% and 9 of 20 at 53%, but spy met it in none (30-minute z +3.8, 10-minute z +1.2).
-- **No false passes.** Pure noise passed 0 of 60 sets and met the bar in either universe 0 times. The z values follow the planted edge as theory predicts: at the median size +5.0, +3.7 and +1.5 at 30 minutes for 55%, 53% and 51%, against a rough expectation of +5.3, +3.2 and +1.1 (all values in the table).
-- **The trade evaluation is exact.** Adding +0.10R and +0.20R to every T13 trade raises average R after costs, gross R and the strict-rule R by +0.1000 and +0.2000 (to 4 decimals); recomputing with no edge reproduces T13's stored R exactly.
-- **What it means for earlier results:** a "FAIL" from T10/T10b says "not shown", not "no edge". An edge of 53-55% at 30 minutes, which would matter for trading, would usually have been failed by the bar as written. Changing the bar (for example judging the 30-minute horizon alone, or pooling all9 without a separate spy test) is a partner decision; nothing was changed here.
+- **The new bar can say yes, and it doesn't say yes to noise.** At the median signal-test size it finds a planted 55% edge in 19 of 20 repeats and a 53% edge in 12 of 20 (the old bar: 0 and 0). At the large size it finds 55% and 53% every time. Pure noise passed 0 of 60 sets.
+- **One candidate in the saved results: T11's Keltner momentum long on 5-minute bars (kc_mom_p6_m2: a close above the 6-bar Keltner band at 2 ATR).** In 2019-2023 the price was up 30 minutes later 55.2% of the time against 49.9% for the matched control (z +3.4), positive in all 5 years, and spy points the same way. Its average 30-minute move was +0.077%, or +0.064% more than the control.
+- **It held on 2016-2018,** the confirmation years it was never fitted on: 53.9% vs 48.5% (z +3.1), positive in all 3 years. But the average move there was only +0.028%.
+- **The move per trade is about the size of the spread.** After a rough cost of one quoted spread (0.034% of price, the median for the nine stocks in T14's tick data): about +0.04% per trade on 2019-2023 and about -0.01% on 2016-2018. It is a real direction effect, but too small to trade in shares as it stands. The next step would be a proper cost test of this one rule, which is a partner decision.
+- **Expected chance passes: about 0.24** across the 180 candidates, so one pass that also holds on independent years is unlikely to be luck. The same rule on 15-minute bars is the closest near miss (z +2.3, 5 of 5 years).
 
-## Detection table (20 repeats each; a set passes when it meets the normal pass bar in BOTH all9 and spy)
+## Audit with the new bar (20 repeats each; T10 bar shown for comparison)
 
-| Size (all9 / spy signals) | Planted edge at +30 min | Passed | Met the bar in all9 | Met the bar in spy | Share our way at 30 min (all9) | at 10 min | z at 30 / 10 min (all9) | z at 30 / 10 min (spy) | Expected z 30 / 10 (all9) |
-|---|---|---|---|---|---|---|---|---|---|
-| median: 5,642 / ~627 | 55% | 0/20 | 0/20 | 1/20 | 54.4% | 51.1% | +5.0 / +1.8 | +1.9 / +0.9 | +5.3 / +2.1 |
-| median: 5,642 / ~628 | 53% | 0/20 | 1/20 | 0/20 | 52.7% | 50.4% | +3.7 / +1.6 | +1.1 / +0.5 | +3.2 / +1.2 |
-| median: 5,642 / ~635 | 51% | 0/20 | 0/20 | 0/20 | 50.7% | 49.7% | +1.5 / +0.7 | +0.5 / +0.4 | +1.1 / +0.4 |
-| median: 5,642 / ~613 | none (random) | 0/20 | 0/20 | 0/20 | 49.7% | 49.2% | +0.2 / +0.2 | +0.1 / +0.2 | +0.0 / +0.0 |
-| p25: 1,890 / ~211 | 55% | 0/20 | 0/20 | 0/20 | 54.5% | 51.3% | +3.1 / +1.4 | +1.1 / +0.3 | +3.1 / +1.2 |
-| p25: 1,890 / ~212 | 53% | 0/20 | 0/20 | 0/20 | 52.3% | 50.3% | +1.5 / +0.8 | +0.2 / -0.1 | +1.8 / +0.7 |
-| p25: 1,890 / ~215 | 51% | 0/20 | 0/20 | 0/20 | 50.9% | 49.5% | +0.6 / -0.1 | +0.5 / +0.2 | +0.6 / +0.2 |
-| p25: 1,890 / ~212 | none (random) | 0/20 | 0/20 | 0/20 | 49.6% | 49.2% | +0.1 / +0.0 | +0.1 / +0.3 | +0.0 / +0.0 |
-| p75: 26,750 / ~2,966 | 55% | 0/20 | 19/20 | 0/20 | 54.5% | 51.3% | +11.8 / +4.5 | +3.8 / +1.2 | +11.6 / +4.5 |
-| p75: 26,750 / ~2,961 | 53% | 0/20 | 9/20 | 0/20 | 52.5% | 50.5% | +6.8 / +2.8 | +2.3 / +0.7 | +6.9 / +2.7 |
-| p75: 26,750 / ~2,958 | 51% | 0/20 | 1/20 | 0/20 | 50.5% | 49.6% | +2.4 / +0.9 | +0.8 / +0.6 | +2.3 / +0.9 |
-| p75: 26,750 / ~2,981 | none (random) | 0/20 | 0/20 | 0/20 | 49.5% | 49.3% | -0.1 / +0.2 | +0.0 / +0.2 | +0.0 / +0.0 |
+| Size (all9 / spy signals) | Planted edge at +30 min | Passed, new bar | Passed, T10 bar | z at 30 min (all9) |
+|---|---|---|---|---|
+| median: 5,642 / ~627 | 55% | 19/20 | 0/20 | +5.0 |
+| median: 5,642 / ~628 | 53% | 12/20 | 0/20 | +3.7 |
+| median: 5,642 / ~635 | 51% | 2/20 | 0/20 | +1.5 |
+| median: 5,642 / ~613 | none (pure noise) | 0/20 | 0/20 | +0.2 |
+| p25: 1,890 / ~211 | 55% | 8/20 | 0/20 | +3.1 |
+| p25: 1,890 / ~212 | 53% | 2/20 | 0/20 | +1.5 |
+| p25: 1,890 / ~215 | 51% | 0/20 | 0/20 | +0.6 |
+| p25: 1,890 / ~212 | none (pure noise) | 0/20 | 0/20 | +0.1 |
+| p75: 26,750 / ~2,966 | 55% | 20/20 | 0/20 | +11.8 |
+| p75: 26,750 / ~2,961 | 53% | 20/20 | 0/20 | +6.8 |
+| p75: 26,750 / ~2,958 | 51% | 7/20 | 0/20 | +2.4 |
+| p75: 26,750 / ~2,981 | none (pure noise) | 0/20 | 0/20 | -0.1 |
 
-## Planted trade edge (T13 Part A trades, 2016-2023, normal R-after-costs evaluation)
+False passes on pure noise: 0 of 60 sets (the limit set for going on was about 1 in 20).
 
-| Added before costs | Trades | Avg R after costs: before -> after (change) | Gross R change | Strict rule change | z: before -> after | z vs opposite: before -> after |
-|---|---|---|---|---|---|---|
-| +0.10R | 32,232 | -0.1600 -> -0.0600 (+0.1000) | +0.1000 | +0.1000 | -5.5 -> -2.1 | +8.6 -> +11.3 |
-| +0.20R | 32,232 | -0.1600 -> +0.0400 (+0.2000) | +0.2000 | +0.2000 | -5.5 -> +1.4 | +8.6 -> +14.1 |
+## Re-judged saved results
 
-Recomputing every trade's R with no edge reproduces T13's stored values to within 0.0e+00R. T13's cost of 0.05% of price per side also applies to the extra exit distance: longs pay a little more and shorts a little less, which nets out to under 0.0001R.
+Comparisons: 180 rule x side x bar-size candidates (98 from T10b, 82 from T11), one 3-SE test each (all9, 30 minutes). If no rule had an edge, about 0.24 would pass by chance at most (spy's same-sign check and the years check only lower it).
 
-## Checks behind the verdict
+| Set | Rule | Signals (all9 / spy) | Share our way at 30 min vs control | z at 30 min | spy share gap | Years positive | z at 10 / 60 min | Avg move at 30 min (vs control) | 2016-2018 (all9): share vs control, z, avg move, years + | Rough after-cost move per trade |
+|---|---|---|---|---|---|---|---|---|---|---|
+| T11 | kc_mom_p6_m2 long, 5m bars | 4,348 / 455 | 55.2% vs 49.9% | +3.4 | +4.0 pts | 5/5 | +2.1 / +2.8 | +0.077% (+0.064%) | 53.9% vs 48.5%, z +3.1, +0.028% (vs control +0.052%), 3/3 | 2019-2023: +0.043%; 2016-2018: -0.006% |
 
-- Pure noise passes at most 1 of 20 at every size, and meets the bar in either universe at most 2 of 20: yes (passed 0 of 60 in all).
-- Detection rises with the planted edge at every size: yes.
-- A 55% edge is found in at least 18 of 20 repeats at the large size: no.
-- The planted trade edge comes back at the amount added (within 0.001R after costs, exactly before costs): yes.
+After-cost estimate: the average 30-minute move our way minus one full quoted spread for the round trip (buy at the ask, sell at the bid), 0.034% of price: the median spread of the nine stocks in T14's tick sample (13 quotes, taken at 9:35-9:40 breakout moments, when spreads are wider than later in the morning). Sale fees are under 0.003% and left out. This is a rough per-trade figure, not a backtest: no position limits, no overlapping signals removed, and the average move includes the market's drift (the move versus the control is shown beside it).
 
-## Method
+## Closest other candidates (by z at 30 minutes; none passes)
 
-Planted direction edges: signals at random moments on all9 (a random symbol, a random research day that is
-not an FOMC day, a random whole decision minute in the T10 entry window 9:35-11:50). The direction is set
-from the ACTUAL move to +30 minutes, for this audit only: with probability p it is the direction the stock
-then moved (p = 55%, 53%, 51%), otherwise the opposite; a zero move gets a random direction. Pure noise:
-the same with a random direction. Each set then goes through the normal T10b signal test unchanged:
-signals.add_moves (moves and the other-day control) and stats.row_stats (the pass bar), in all9 and in spy;
-a set passes when both meet the bar, as for any rule. 20 repeats per setting, at three sizes: the median
-T10b row (5,642 signals in all9) and its 25th and 75th percentiles (1,890 and 26,750).
-Planted trade edge: T13 Part A's trades (2016-2023) with +0.10R or +0.20R added to every trade before costs
-(the exit moved that far our way, costs recomputed with T13's own formula), then t13.a_summary.
-Expected z: a rough guide only, (edge in share) / (0.71 / sqrt(n)) with the 10-minute share edge derived from a random walk (the sign at 10 minutes agrees with the sign at 30 minutes about 70% of the time); day clustering and the control's own noise make real z values somewhat lower.
+| Set | Rule | Signals (all9) | z at 30 min | Share gap (pts) | Years + | spy gap (pts) | Avg move at 30 min |
+|---|---|---|---|---|---|---|---|
+| T10b | gap0.5_cont short | 2,764 | +2.5 | +4.9 | 5/5 | +10.7 | +0.047% |
+| T11 | kc_mom_p6_m2 long, 15m bars | 4,150 | +2.3 | +3.8 | 5/5 | +1.6 | +0.054% |
+| T10b | gap1_cont long | 1,638 | +1.9 | +4.6 | 5/5 | +12.9 | +0.072% |
+| T10b | gap1_cont short | 1,565 | +1.9 | +4.8 | 4/5 | +25.3 | +0.036% |
+| T11 | kc_mom_p20_m2 long, 15m bars | 22,420 | +1.9 | +1.6 | 4/5 | +2.0 | +0.024% |
+| T10b | b3_reentry long, 5m bars | 9,646 | +1.8 | +1.8 | 4/5 | +1.6 | +0.008% |
+| T11 | kc_mom_p6_m1.3 long, 5m bars | 14,607 | +1.8 | +1.6 | 4/5 | +0.3 | +0.028% |
+| T11 | kc_mom_p6_m2 short, 5m bars | 3,732 | +1.6 | +2.8 | 4/5 | +2.1 | -0.004% |
 
 ---
 
-Full per-trade tables: [history/2026-10-29-t17-bench-audit.md](history/2026-10-29-t17-bench-audit.md)
+Full per-trade tables: [history/2026-10-29-t17b-corrected-pass-bar.md](history/2026-10-29-t17b-corrected-pass-bar.md)
