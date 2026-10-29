@@ -1,138 +1,133 @@
-T15 OUTCOME: NO PASS
+QUANTCONNECT FEASIBLE: the free cloud data has SPY same-day expirations (weekly Fridays from 2012, Mon/Wed/Fri from 2018, every day from 2023), SPXW listings, minute quotes for every checked same-day contract, and working fills at the bid/ask; the 10 KB-per-backtest log cap is the main constraint.
 
-# T15: "Quick Flip Scalper" (fading a large first 15-minute candle), 2016-2023
+T16: QuantConnect data feasibility for SPY/SPX same-day options (data check only; no strategy results)
 
-Run 2026-10-29. One-off test; pass bars fixed in advance; the 2024-2025 holdout was not touched; rulebook.yaml unchanged. The verdict uses the stated setup: 5-minute signal bars and a box of at least 0.25x the 14-day ATR, under the strict entry-minute rule, after the T14 calibrated costs. The 1-, 2- and 3-minute bars and the 0.22x box are reported alongside but do not decide the outcome.
+Run 2026-10-29 with QuantConnect cloud backtests on the free plan. Nothing was downloaded locally. QuantConnect's data terms restrict redistribution, so this report shows only counts and summary statistics, with no raw quotes.
 
-## Findings
+## Same-day expirations per year
 
-- **No universe holds.** On the stated setup (5-minute bars, box >= 0.25x ATR, strict rule) the average trade loses after costs in every universe and every year: all9 -0.37R (z -7.6), spy -0.99R (z -6.8, only 192 trades), stocks in play -0.21R (z -7.2). 0 of 8 years are positive anywhere.
-- **It loses before costs too.** Gross R (no slippage, no fees) is -0.21 (all9), -0.67 (spy) and -0.11 (stocks in play). The fade's far-side target (median 4.6-5.7R away) is reached in only 8-15% of trades; 73-81% are stopped.
-- **Costs make it worse because the stops are tight.** The median stop is 0.27% of price on all9, 0.12% on SPY and 0.61% on stocks in play, so T14's calibrated slippage costs 0.16R, 0.33R and 0.10R per trade.
-- **"Beating the opposite direction" is not an edge here.** The opposite-direction control enters on the other side of the quote, where T14 measured much larger slippage (0.13-0.39% of price vs 0.03-0.07%); with stops this tight that alone costs it several tenths of an R. Stocks in play clears that check (z +4.6) while still losing money itself.
-- **No other bar size or box threshold helps.** The 1-, 2- and 3-minute bars are worse (more, smaller trades with higher cost in R), and the 0.22x box changes little. None of the 24 variants would meet even the single-universe bar.
-- **The entry-minute rule hardly matters:** close and strict differ by at most 0.01R on 5-minute bars and 0.1R on 1-minute bars.
+| Year | Trading days | SPY same-day expirations | SPXW same-day expirations | Days with no SPY chain | Days with no SPXW chain |
+|---|---|---|---|---|---|
+| 2012 | 250 | 41 | 37 | 0 | 24 |
+| 2013 | 252 | 42 | 38 | 0 | 0 |
+| 2014 | 252 | 44 | 42 | 0 | 0 |
+| 2015 | 252 | 54 | 47 | 0 | 0 |
+| 2016 | 252 | 71 | 107 | 0 | 0 |
+| 2017 | 251 | 104 | 157 | 0 | 0 |
+| 2018 | 251 | 148 | 158 | 0 | 0 |
+| 2019 | 252 | 157 | 161 | 0 | 0 |
+| 2020 | 253 | 159 | 160 | 0 | 0 |
+| 2021 | 252 | 157 | 159 | 0 | 0 |
+| 2022 | 251 | 170 | 220 | 0 | 0 |
+| 2023 | 250 | 250 | 250 | 0 | 0 |
+| 2024 | 252 | 252 | 252 | 0 | 0 |
+| 2025 | 250 | 250 | 250 | 0 | 0 |
+| Total | 3520 | 1899 | 2038 | 0 | 24 |
 
-## Pass bar (5-minute bars, box >= 0.25x ATR, strict rule, after costs)
+## Same-day expirations per weekday (share of that weekday's trading days)
 
-| Universe | Trades | Avg R after costs | z | Years positive | Beats opposite by (R) | z vs opposite | Holds |
-|---|---|---|---|---|---|---|---|
-| all9 (9 symbols) | 2959 | -0.367 | -7.6 | 0 of 8 | +0.236 | +2.8 | no |
-| spy | 192 | -0.994 | -6.8 | 0 of 8 | +0.133 | +0.5 | no |
-| stocks in play (T13 top 20) | 6124 | -0.209 | -7.2 | 0 of 8 | +0.219 | +4.6 | no |
+| Year | SPY Mon | SPY Tue | SPY Wed | SPY Thu | SPY Fri | SPXW Mon | SPXW Tue | SPXW Wed | SPXW Thu | SPXW Fri |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2012 | 1/47 | 0/50 | 0/51 | 1/51 | 39/51 | 0/47 | 0/50 | 0/51 | 1/51 | 36/51 |
+| 2013 | 1/48 | 1/52 | 0/51 | 1/50 | 39/51 | 0/48 | 0/52 | 0/51 | 0/50 | 38/51 |
+| 2014 | 2/48 | 1/52 | 1/52 | 1/50 | 39/50 | 0/48 | 1/52 | 1/52 | 1/50 | 39/50 |
+| 2015 | 0/48 | 2/52 | 1/52 | 4/51 | 47/49 | 2/48 | 2/52 | 1/52 | 5/51 | 37/49 |
+| 2016 | 0/46 | 0/52 | 17/52 | 3/51 | 51/51 | 18/46 | 3/52 | 44/52 | 3/51 | 39/51 |
+| 2017 | 0/46 | 0/51 | 52/52 | 1/51 | 51/51 | 46/46 | 9/51 | 52/52 | 3/51 | 47/51 |
+| 2018 | 43/48 | 3/51 | 50/50 | 1/51 | 51/51 | 48/48 | 7/51 | 50/50 | 2/51 | 51/51 |
+| 2019 | 48/48 | 6/52 | 51/51 | 1/50 | 51/51 | 48/48 | 7/52 | 51/51 | 4/50 | 51/51 |
+| 2020 | 48/48 | 6/52 | 52/52 | 4/52 | 49/49 | 48/48 | 6/52 | 52/52 | 5/52 | 49/49 |
+| 2021 | 47/47 | 5/52 | 52/52 | 3/51 | 50/50 | 47/47 | 7/52 | 52/52 | 3/51 | 50/50 |
+| 2022 | 45/45 | 13/52 | 52/52 | 9/51 | 51/51 | 45/45 | 38/52 | 52/52 | 34/51 | 51/51 |
+| 2023 | 45/45 | 51/51 | 52/52 | 51/51 | 51/51 | 45/45 | 51/51 | 52/52 | 51/51 | 51/51 |
+| 2024 | 48/48 | 53/53 | 50/50 | 50/50 | 51/51 | 48/48 | 53/53 | 50/50 | 50/50 | 51/51 |
+| 2025 | 48/48 | 52/52 | 52/52 | 48/48 | 50/50 | 48/48 | 52/52 | 52/52 | 48/48 | 50/50 |
 
-Universes holding: 0 of 3 (needed: 2).
+## Quote quality
 
-| Universe | at least 300 trades | avg R after costs >= 3 SE above zero (strict) | positive in at least 6 of 8 years (strict) | beats the opposite direction by >= 3 SE (strict) |
-|---|---|---|---|---|
-| all9 (9 symbols) | yes | no | no | no |
-| spy | no | no | no | no |
-| stocks in play (T13 top 20) | yes | no | no | yes |
+Ordinary days (12, drawn with seed 16 from SPY same-day-expiration days spread across 2016-2023): 2016-11-04, 2017-11-08, 2018-10-08, 2019-03-01, 2020-01-10, 2020-03-31, 2021-03-01, 2021-09-10, 2022-02-11, 2023-01-17, 2023-05-18, 2023-08-10. Stress days: 2018-02-05, 2018-02-06, 2020-03-09, 2020-03-12, 2020-03-16, 2022-09-13, 2024-08-05.
+For each day at 9:45, 12:00 and 15:00: the out-of-the-money put and call nearest to 0.5%, 1% and 2% from SPY's price, using the last 1-minute quote bar before that time (bid and ask at the bar's close). Where SPY had no same-day expiration, the nearest expiration is used and shown separately.
 
-## Every bar size and box threshold (reported; not part of the verdict)
+| Group | Day type | Distance | Quotes checked | Two-sided | Zero or missing bid | No quote bar in the last minute | Median spread ($) | Median spread (% of mid) | 90th pct spread (% of mid) |
+|---|---|---|---|---|---|---|---|---|---|
+| ordinary | same-day | 0.5% | 72 | 97% | 2 | 0 | 0.01 | 7.3% | 40.0% |
+| ordinary | same-day | 1.0% | 72 | 92% | 6 | 0 | 0.01 | 11.4% | 66.7% |
+| ordinary | same-day | 2.0% | 72 | 60% | 29 | 0 | 0.01 | 9.5% | 66.7% |
+| stress | same-day | 0.5% | 14 | 100% | 0 | 0 | 0.09 | 4.1% | 6.7% |
+| stress | same-day | 1.0% | 14 | 100% | 0 | 0 | 0.09 | 5.0% | 7.6% |
+| stress | same-day | 2.0% | 14 | 100% | 0 | 0 | 0.04 | 7.4% | 15.3% |
+| stress | nearest expiry | 0.5% | 22 | 100% | 0 | 0 | 0.04 | 1.6% | 8.2% |
+| stress | nearest expiry | 1.0% | 22 | 100% | 0 | 0 | 0.05 | 2.4% | 9.4% |
+| stress | nearest expiry | 2.0% | 22 | 100% | 0 | 0 | 0.06 | 3.4% | 25.4% |
 
-| Universe | Bars | Box | Trades | Strict: avg R | z | Years + | z vs opposite | Close rule: avg R | z | Gross R (strict) | Opposite avg R (strict) |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| all9 | 5m | 0.25 | 2959 | -0.367 | -7.6 | 0 | +2.8 | -0.366 | -7.6 | -0.210 | -0.603 |
-| all9 | 5m | 0.22 | 3247 | -0.390 | -8.4 | 0 | +2.8 | -0.388 | -8.4 | -0.226 | -0.614 |
-| all9 | 1m | 0.25 | 7180 | -0.837 | -18.4 | 0 | +11.4 | -0.754 | -15.4 | -0.497 | -1.691 |
-| all9 | 1m | 0.22 | 7879 | -0.862 | -19.8 | 0 | +12.4 | -0.780 | -16.8 | -0.511 | -1.744 |
-| all9 | 2m | 0.25 | 5735 | -0.648 | -15.9 | 0 | +6.7 | -0.630 | -15.2 | -0.401 | -1.128 |
-| all9 | 2m | 0.22 | 6286 | -0.678 | -17.2 | 0 | +7.0 | -0.659 | -16.5 | -0.421 | -1.162 |
-| all9 | 3m | 0.25 | 4589 | -0.537 | -13.2 | 0 | +3.1 | -0.533 | -13.0 | -0.339 | -0.765 |
-| all9 | 3m | 0.22 | 5031 | -0.551 | -14.1 | 0 | +3.7 | -0.544 | -13.8 | -0.347 | -0.813 |
-| spy | 5m | 0.25 | 192 | -0.994 | -6.8 | 0 | +0.5 | -0.994 | -6.8 | -0.668 | -1.127 |
-| spy | 5m | 0.22 | 254 | -1.077 | -8.4 | 0 | +0.9 | -1.077 | -8.4 | -0.717 | -1.288 |
-| spy | 1m | 0.25 | 477 | -1.688 | -10.9 | 0 | +9.1 | -1.600 | -9.8 | -0.973 | -3.754 |
-| spy | 1m | 0.22 | 629 | -1.642 | -11.6 | 0 | +11.3 | -1.552 | -10.4 | -0.894 | -3.925 |
-| spy | 2m | 0.25 | 397 | -1.383 | -10.3 | 0 | +4.8 | -1.383 | -10.3 | -0.868 | -2.429 |
-| spy | 2m | 0.22 | 525 | -1.406 | -11.5 | 0 | +6.4 | -1.407 | -11.5 | -0.855 | -2.635 |
-| spy | 3m | 0.25 | 304 | -1.190 | -8.5 | 0 | +2.1 | -1.177 | -8.3 | -0.772 | -1.684 |
-| spy | 3m | 0.22 | 398 | -1.204 | -9.7 | 0 | +3.5 | -1.194 | -9.6 | -0.766 | -1.912 |
-| sip | 5m | 0.25 | 6124 | -0.209 | -7.2 | 0 | +4.6 | -0.203 | -6.9 | -0.108 | -0.428 |
-| sip | 5m | 0.22 | 6200 | -0.210 | -7.3 | 0 | +4.8 | -0.204 | -7.0 | -0.108 | -0.435 |
-| sip | 1m | 0.25 | 15043 | -0.483 | -11.4 | 0 | +11.9 | -0.383 | -7.6 | -0.219 | -1.262 |
-| sip | 1m | 0.22 | 15220 | -0.492 | -11.7 | 0 | +12.0 | -0.389 | -7.8 | -0.226 | -1.269 |
-| sip | 2m | 0.25 | 11824 | -0.319 | -11.0 | 0 | +10.2 | -0.298 | -9.8 | -0.153 | -0.781 |
-| sip | 2m | 0.22 | 11972 | -0.323 | -11.1 | 0 | +10.4 | -0.300 | -9.9 | -0.156 | -0.788 |
-| sip | 3m | 0.25 | 9398 | -0.245 | -8.6 | 0 | +7.4 | -0.234 | -8.1 | -0.112 | -0.633 |
-| sip | 3m | 0.22 | 9509 | -0.250 | -8.8 | 0 | +7.4 | -0.239 | -8.4 | -0.116 | -0.634 |
-
-Variants that would meet the single-universe bar: none.
-
-## By year (5-minute bars, box >= 0.25x ATR, strict rule)
-
-| Universe | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 |
-|---|---|---|---|---|---|---|---|---|
-| all9 | -0.37 (381) | -0.59 (375) | -0.38 (358) | -0.53 (371) | -0.22 (315) | -0.40 (379) | -0.13 (395) | -0.30 (385) |
-| spy | -1.02 (30) | -1.84 (26) | -0.16 (20) | -1.49 (26) | -1.12 (10) | -0.64 (31) | -0.83 (30) | -0.76 (19) |
-| sip | -0.26 (703) | -0.27 (730) | -0.12 (757) | -0.09 (815) | -0.18 (735) | -0.22 (835) | -0.28 (782) | -0.27 (767) |
-
-## By pattern and side (5-minute bars, box >= 0.25x ATR, strict rule)
-
-| Universe | Pattern | Side | Trades | Avg R after costs | z | Gross R | Target / stop / close |
-|---|---|---|---|---|---|---|---|
-| all9 | engulfing | short | 1183 | -0.306 | -3.7 | -0.137 | 12.9% / 75.8% / 11.2% |
-| all9 | engulfing | long | 1047 | -0.372 | -4.9 | -0.235 | 12.5% / 75.5% / 12.0% |
-| all9 | hammer | short | 362 | -0.480 | -3.8 | -0.290 | 13.0% / 79.3% / 7.7% |
-| all9 | hammer | long | 367 | -0.435 | -3.9 | -0.298 | 12.5% / 77.7% / 9.8% |
-| spy | engulfing | short | 73 | -0.929 | -3.3 | -0.551 | 15.1% / 80.8% / 4.1% |
-| spy | engulfing | long | 70 | -0.987 | -5.4 | -0.732 | 15.7% / 78.6% / 5.7% |
-| spy | hammer | short | 26 | -0.809 | -1.6 | -0.403 | 19.2% / 76.9% / 3.8% |
-| spy | hammer | long | 23 | -1.434 | -4.6 | -1.141 | 4.3% / 95.7% / 0.0% |
-| sip | engulfing | short | 2111 | -0.246 | -5.2 | -0.143 | 7.7% / 72.1% / 20.2% |
-| sip | engulfing | long | 2256 | -0.175 | -3.5 | -0.081 | 7.4% / 73.0% / 19.5% |
-| sip | hammer | short | 858 | -0.178 | -2.3 | -0.067 | 10.3% / 71.7% / 18.1% |
-| sip | hammer | long | 899 | -0.237 | -3.1 | -0.132 | 9.1% / 76.5% / 14.3% |
-
-## Trade shape and costs (5-minute bars, box >= 0.25x ATR)
-
-| Universe | Median R (% of price) | Median target distance (R) | Win rate (strict) | Exits: target / stop / close (strict) | Cost per trade (R): strict gross - net | Random-direction gap (R), z |
+| Day | Type | Expiry used | 9:45 two-sided | 12:00 two-sided | 15:00 two-sided | Median spread (% of mid) |
 |---|---|---|---|---|---|---|
-| all9 | 0.27% | 4.63 | 22.1% | 12.7% / 76.3% / 10.9% | 0.156 | +0.137, +2.7 |
-| spy | 0.12% | 4.16 | 16.7% | 14.6% / 81.2% / 4.2% | 0.327 | +0.055, +0.3 |
-| sip | 0.61% | 5.73 | 24.6% | 8.2% / 73.0% / 18.8% | 0.101 | +0.134, +4.1 |
+| 2016-11-04 | ordinary | same day | 5/6 | 5/6 | 5/6 | 22.2% |
+| 2017-11-08 | ordinary | same day | 3/6 | 2/6 | 2/6 | 40.0% |
+| 2018-02-05 | stress | next (2018-02-07) | 6/6 | 6/6 | 6/6 | 3.2% |
+| 2018-02-06 | stress | next (2018-02-07) | 6/6 | 6/6 | 6/6 | 9.5% |
+| 2018-10-08 | ordinary | same day | 4/6 | 5/6 | 5/6 | 11.4% |
+| 2019-03-01 | ordinary | same day | 5/6 | 5/6 | 4/6 | 13.0% |
+| 2020-01-10 | ordinary | same day | 3/6 | 3/6 | 4/6 | 23.4% |
+| 2020-03-09 | stress | same day | 0/0 | 6/6 | 6/6 | 4.4% |
+| 2020-03-12 | stress | next (2020-03-13) | 0/0 | 6/6 | 6/6 | 2.3% |
+| 2020-03-16 | stress | same day | 0/0 | 6/6 | 6/6 | 5.6% |
+| 2020-03-31 | ordinary | same day | 6/6 | 6/6 | 6/6 | 5.2% |
+| 2021-03-01 | ordinary | same day | 6/6 | 5/6 | 5/6 | 9.5% |
+| 2021-09-10 | ordinary | same day | 5/6 | 6/6 | 6/6 | 15.4% |
+| 2022-02-11 | ordinary | same day | 6/6 | 6/6 | 6/6 | 3.9% |
+| 2022-09-13 | stress | next (2022-09-14) | 6/6 | 6/6 | 6/6 | 1.2% |
+| 2023-01-17 | ordinary | same day | 6/6 | 6/6 | 6/6 | 6.9% |
+| 2023-05-18 | ordinary | same day | 5/6 | 5/6 | 5/6 | 13.3% |
+| 2023-08-10 | ordinary | same day | 5/6 | 6/6 | 6/6 | 8.0% |
+| 2024-08-05 | stress | same day | 6/6 | 6/6 | 6/6 | 4.4% |
 
-## Funnel (stock-days, 5-minute bars)
+Snapshots with no SPY price or no option chain: 2020-03-09 9:45, 2020-03-12 9:45, 2020-03-16 9:45.
 
-| Universe | Stock-days | Flat box | Box < 0.22x ATR | No entry | Fill beyond stop/target | Trades (>= 0.22) | Trades (>= 0.25) |
-|---|---|---|---|---|---|---|---|
-| all9 | 18108 | 169 | 2246 | 12437 | 0 | 3247 | 2959 |
-| spy | 2012 | 8 | 888 | 861 | 0 | 254 | 192 |
-| sip | 39885 | 264 | 719 | 32700 | 0 | 6200 | 6124 |
+## Iron condor plumbing (mechanics check, not a result)
 
-## Method
+On 3 ordinary days: short put and call nearest 1% out of the money, long legs $2 further out, one contract each, opened with market orders at 9:45 and closed at 15:00. The table only checks that each order filled and at which side of the quote; no profit or loss is reported.
 
-python -m backtest.bench.t15 run --universe bench       # all9 and spy -> reports/bench/t15/bench.pkl
-    python -m backtest.bench.t15 run --universe sip         # T13 stocks-in-play top 20 -> reports/bench/t15/sip.pkl
-    python -m backtest.bench.t15 report --md full.md --compact compact.md --findings findings.md
-Box: the 9:30-9:45 candle (1-minute bars 9:30-9:44). It counts if its high-low range is at least 0.25x the
-14-day daily ATR (known before the open; 0.22x also reported). An up candle -> shorts above the box high only;
-a down candle -> longs below the box low only; a flat candle -> no trade. Signal bars: 5-minute bars (also 1, 2
-and 3), anchored at 9:45, that start at or after 9:45 and end by 11:00; earlier bars of the same size (from
-9:30) count as the bars before a signal. The signal bar must close outside the box (below the low for longs,
-above the high for shorts).
-Hammer (long): the two bars before it each closed lower than the bar before them; lower wick >= 2x body; upper
-wick <= body; close in the top third of the bar's range. Entry: the first later 1-minute bar that trades above
-the hammer's high; stop at its low. Inverted hammer (short): the mirror image.
-Bullish engulfing (long): a green bar whose body covers the previous bar's red body (open <= previous close,
-close >= previous open). Entry: the first later 1-minute bar that trades at the previous bar's high; stop at
-the engulfing bar's low. Bearish engulfing: the mirror image.
-A setup waits for its entry until 11:00 and is cancelled if a 1-minute bar touches its stop first. The trade
-is the setup whose entry comes first; one trade per stock-day. Fill: the entry level, or the minute's open if
-it opens beyond it, plus the T14 calibrated entry slippage for the price band. R = fill - stop (before
-slippage). Target: the box's far side (the high for longs, the low for shorts), a limit order filled at that
-price with no extra cost. Stop: at the stop, or the minute's open if it opens through, minus the T14
-calibrated stop slippage. If a minute touches both, the stop counts. Otherwise the exit is the close of the
-15:59 bar. Fees: the SEC and FINRA sale fees (T14). Entry minute: "close" counts it as stopped only if it
-closes beyond the stop, "strict" counts any touch; the target counts there only on a close beyond it.
-Controls: the same stock, moment and R in the opposite direction (target mirrored at the same distance, with
-T14's control slippage, i.e. the other side of the quote); and a random direction (seed fixed).
-Prices: all9/spy use the bench's split-adjusted bars converted to the day's actual prices (Alpaca's daily
-raw close / adjusted close; SPY and QQQ had no splits); the price band uses actual prices. FOMC days are kept.
+| Day | Leg | Open: filled | Open fill at | Close: filled | Close fill at |
+|---|---|---|---|---|---|
+| 2016-11-04 | short put | yes | bid | yes | ask |
+| 2016-11-04 | long put | yes | ask | yes | bid |
+| 2016-11-04 | short call | yes | bid | yes | ask |
+| 2016-11-04 | long call | yes | ask | yes | ask (bid was $0; LEAN filled the sale at the ask) |
+| 2020-03-31 | short put | yes | bid | yes | ask |
+| 2020-03-31 | long put | yes | ask | yes | bid |
+| 2020-03-31 | short call | yes | bid | yes | ask |
+| 2020-03-31 | long call | yes | ask | yes | bid |
+| 2023-08-10 | short put | yes | bid | yes | ask |
+| 2023-08-10 | long put | yes | ask | yes | bid |
+| 2023-08-10 | short call | yes | bid | yes | bid = ask (locked quote) |
+| 2023-08-10 | long call | yes | ask | yes | bid = ask (locked quote) |
 
-Costs (T14, from 4,000 tick-replayed trades): mean entry slippage beyond the level and mean stop slippage, as % of price, by price band ($5-10 to $100+), separately for the signal side and for the opposite side at the same moment. Statistics: standard errors clustered by day. Bench symbols: the first 14 sessions of 2016 have no ATR (no 2015 data), so they are skipped.
+## Notes
+
+- **Missing Fridays in 2012-2016 have a known cause.** Until February 2015 the monthly SPY options carried a Saturday expiration date (trading still ended on the Friday), so 12 third Fridays a year show no same-day SPY expiration. SPXW weeklies skipped the third Friday (the monthly SPX options were AM-settled standard SPX) until about 2016-2017. The few Mon/Tue/Thu expirations before daily listings are holiday-shifted or quarter-end contracts.
+- **No 9:45 snapshot on 2020-03-09, 03-12 and 03-16.** Market-wide circuit breakers halted trading shortly after the open on those days, so there was no SPY minute bar in the 5 minutes before 9:45. The 12:00 and 15:00 snapshots are complete.
+- **Several stress days had no same-day SPY expiration** (Tuesdays and a Thursday before SPY had daily expirations, which began in late 2022). Those rows use the next expiration and are shown separately.
+- **Zero bids are a market feature, not missing data.** The 29 zero bids among the 72 same-day 2%-away quotes on ordinary days are far out-of-the-money options worth less than a cent or two; every checked contract had a quote bar in the minute before the check.
+- **Spreads in % of mid are large because these options are cheap.** The median spread is $0.01 on ordinary days, which is 7-11% of the mid price.
+- **LEAN fill-model quirk.** On 2016-11-04 a long call with a $0 bid was sold at the $0.01 ask by LEAN's default fill model. A real test should use a fill model that fills sales at the bid, including a $0 bid.
+- **SPXW was checked for listings only.** The quote checks are SPY only, as the task asked. QuantConnect has no SPXW chain on 24 trading days in 2012.
+- **Holdout.** 2024-2025 appear only in this data check (expiration counts and 2024-08-05 quotes), as the instruction asked; no strategy was run on them.
+
+## Free-plan limits met
+
+| Limit | What we met |
+|---|---|
+| Plan | Free organization: 1 seat, 1 backtest node (B-MICRO), 1 research node (not used). |
+| Concurrency | One cloud backtest at a time (one node), so the 6 runs were made one after another. |
+| Backtest time | The 2012-2025 expiry scan (daily SPY, two option-chain listings a day) took 14 minutes; each quote run took about 22 seconds; compiles 1-3 seconds. No time limit was hit. QuantConnect's docs say the free node adds a 20-second launch delay and allows 200 backtests a day. |
+| Logs | 10 KB of log per backtest on the free plan (3 MB of log reading a day). This was the binding limit: output had to be packed to one line per snapshot and the 19 quote days split into 4 backtests (largest log 6.8 KB). |
+| Data | SPY equity options, SPX/SPXW index options and SPY minute bars were all usable in cloud backtests at no charge; the account's credit balance was unchanged after all runs. Tick and second data are not in the free plan (not needed here). Downloading this data for local use would be a paid purchase; it was not attempted. |
+
+## Verdict
+
+QUANTCONNECT FEASIBLE: the free cloud data has SPY same-day expirations (weekly Fridays from 2012, Mon/Wed/Fri from 2018, every day from 2023), SPXW listings, minute quotes for every checked same-day contract, and working fills at the bid/ask; the 10 KB-per-backtest log cap is the main constraint.
 
 ---
 
-Full per-trade tables: [history/2026-10-29-t15-quick-flip.md](history/2026-10-29-t15-quick-flip.md)
+Full per-trade tables: [history/2026-10-29-t16-quantconnect-feasibility.md](history/2026-10-29-t16-quantconnect-feasibility.md)
