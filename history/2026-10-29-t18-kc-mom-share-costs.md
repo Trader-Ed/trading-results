@@ -1,3 +1,5 @@
+BENCH CHECK: OK (2026-10-29 07:43, code 9a10be3, fingerprint 343d9f407d45)
+
 T18 OUTCOME: NOT TRADEABLE
 
 # T18: cost test in shares of kc_mom_p6_m2 long (5-minute bars), measured NBBO costs
