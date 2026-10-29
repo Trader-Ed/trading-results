@@ -1,126 +1,138 @@
-MEASUREMENT OUTCOME: NO CANDIDATE
+T15 OUTCOME: NO PASS
 
-# T14: measuring T13 Part A with trades and quotes (2016-2023)
+# T15: "Quick Flip Scalper" (fading a large first 15-minute candle), 2016-2023
 
-**Comparisons judged: 3 stop widths**, each against five fixed checks. Holdout (2024-2025) not used.
+Run 2026-10-29. One-off test; pass bars fixed in advance; the 2024-2025 holdout was not touched; rulebook.yaml unchanged. The verdict uses the stated setup: 5-minute signal bars and a box of at least 0.25x the 14-day ATR, under the strict entry-minute rule, after the T14 calibrated costs. The 1-, 2- and 3-minute bars and the 0.22x box are reported alongside but do not decide the outcome.
 
 ## Findings
 
-**No stop width passes, so nothing goes to the 2024-2025 holdout.** On the tick sample, after measured costs, every width is a little positive, but none is 3 standard errors above zero. On the full bar set under the strict entry-minute rule, every width is negative.
+- **No universe holds.** On the stated setup (5-minute bars, box >= 0.25x ATR, strict rule) the average trade loses after costs in every universe and every year: all9 -0.37R (z -7.6), spy -0.99R (z -6.8, only 192 trades), stocks in play -0.21R (z -7.2). 0 of 8 years are positive anywhere.
+- **It loses before costs too.** Gross R (no slippage, no fees) is -0.21 (all9), -0.67 (spy) and -0.11 (stocks in play). The fade's far-side target (median 4.6-5.7R away) is reached in only 8-15% of trades; 73-81% are stopped.
+- **Costs make it worse because the stops are tight.** The median stop is 0.27% of price on all9, 0.12% on SPY and 0.61% on stocks in play, so T14's calibrated slippage costs 0.16R, 0.33R and 0.10R per trade.
+- **"Beating the opposite direction" is not an edge here.** The opposite-direction control enters on the other side of the quote, where T14 measured much larger slippage (0.13-0.39% of price vs 0.03-0.07%); with stops this tight that alone costs it several tenths of an R. Stocks in play clears that check (z +4.6) while still losing money itself.
+- **No other bar size or box threshold helps.** The 1-, 2- and 3-minute bars are worse (more, smaller trades with higher cost in R), and the 0.22x box changes little. None of the 24 variants would meet even the single-universe bar.
+- **The entry-minute rule hardly matters:** close and strict differ by at most 0.01R on 5-minute bars and 0.1R on 1-minute bars.
 
-### Step 1, sample
-4,000 T13 Part A trades (500 a year, 250 long and 250 short, seed fixed). 3,981 were replayed from ticks: for 18 there was no valid NBBO quote just before the fill, and for 1 no counted trade at the breakout level. 4 stops (wider widths) touched on a 1-minute bar but never on a counted trade, so those trades exit at the close.
+## Pass bar (5-minute bars, box >= 0.25x ATR, strict rule, after costs)
 
-### Step 2, what the ticks show
-- **The entry minute was the big unknown in T13.** At the paper's 10% stop, the stop was touched inside the entry minute before the fill in 42.7% of trades, and after the fill (a real stop-out) in 21.9%. In 30.2% the only touch came before the fill, and T13's strict rule wrongly counted all of those as stopped. At 25% of ATR the shares are 10.1% / 4.6%; at 50%, 1.4% / 0.8%.
-- **Spread at the fill:** 0.16-0.28% of price by year (widest in 2020-2022), and 0.16% ($100+) to 0.46% ($5-10) by price band. In R it is about 0.4R at the 10% stop, 0.15R at 25% and 0.08R at 50%.
-- **Entry slippage vs the breakout level** (buying at the ask): mean 0.03-0.06% of price, median near 0. **Stop slippage vs the stop** (selling at the bid): mean 0.03-0.11%, rising over the years; 0.13% for $5-10 stocks and 0.05% for $50+.
-- **Fees** (SEC and FINRA on sales; $0 commission) cost 0.007R at the 10% stop and less at wider stops.
+| Universe | Trades | Avg R after costs | z | Years positive | Beats opposite by (R) | z vs opposite | Holds |
+|---|---|---|---|---|---|---|---|
+| all9 (9 symbols) | 2959 | -0.367 | -7.6 | 0 of 8 | +0.236 | +2.8 | no |
+| spy | 192 | -0.994 | -6.8 | 0 of 8 | +0.133 | +0.5 | no |
+| stocks in play (T13 top 20) | 6124 | -0.209 | -7.2 | 0 of 8 | +0.219 | +4.6 | no |
 
-### Step 3, results (average R per trade after measured costs)
-- **Tick sample:** +0.076R at 10% of ATR (z +1.0, 6 of 8 years positive), +0.099R at 25% (z +2.5, 7 of 8), +0.069R at 50% (z +2.9, 6 of 8). Before costs: +0.08, +0.10, +0.07R.
-- **Bar set (32,232 trades, calibrated costs):** under the strict rule, -0.545R, -0.108R and -0.014R (no year above zero by 3 SE). Under the close rule, +0.034R, -0.001R and -0.001R.
-- **Which bar rule matches the ticks:** on the same sampled trades, the close rule gives +0.095R and +0.058R at 25% and 50%, against +0.099R and +0.069R from ticks: a close match. At 10% it is too generous (+0.20R against +0.08R). The strict rule is too harsh at 10% and 25%.
-- **So the most likely full-set result is about zero after costs at 25% and 50%** (the close rule over all 32,232 trades), and slightly positive at best at 10%. The sample's +0.07 to +0.10R is likely partly sample luck: it is about 2.5 sample standard errors above the full-set figure.
-- **Direction is real but doesn't pay.** In every version, trading the first candle's direction beats the opposite direction by 3 SE or more (z +7 to +14). The opposite side loses heavily at the breakout moment, but the strategy's own side only breaks even after costs.
+Universes holding: 0 of 3 (needed: 2).
 
-### Step 4, pass bar
-Every width fails on the tick sample (z below 3) and on the bar set's strict rule (negative). The bar-set test can be read two ways: z ≥ 3 in each of at least 6 years, or z ≥ 3 overall with at least 6 years positive. Both fail. Only the opposite-direction checks pass.
+| Universe | at least 300 trades | avg R after costs >= 3 SE above zero (strict) | positive in at least 6 of 8 years (strict) | beats the opposite direction by >= 3 SE (strict) |
+|---|---|---|---|---|
+| all9 (9 symbols) | yes | no | no | no |
+| spy | no | no | no | no |
+| stocks in play (T13 top 20) | yes | no | no | yes |
 
-### Step 5, practical checks (read-only)
-- **Buying power:** the paper account has $2,500 equity, multiplier 4, buying power $10,000 and Reg T overnight buying power $5,000. It reports no day-trading buying power or pattern-day-trader field. Alpaca's documentation says FINRA's intraday margin rule has replaced the pattern-day-trader rule (no $25,000 minimum, unlimited day trades, $2,000 minimum equity for margin).
-- **Position sizes fit:** at 1% risk ($25), the median position is about $7,560 at the 10% stop, $3,020 at 25% and $1,510 at 50%, all within $10,000. At the 10% stop only one position at a time fits.
-- **Borrow:** 86% of the sample's shorts, and 87% of all T13 shorts, are in stocks Alpaca marks easy to borrow today. 7% of those symbols are no longer listed as active. Historical borrow status is not available.
-- **No account simulation was run,** because no width passed.
+## Every bar size and box threshold (reported; not part of the verdict)
 
-### Notes
-- **Fee rates:** SEC Section 31 rates by date are partly approximate (confirmed: $13.00 per million to 2019-04-15, $22.90 → $8.00 on 2023-02-27); FINRA TAF $0.000119 a share to 2021, then $0.000130 and $0.000145. Either fee is under 0.003% of a sale.
-- **Data:** 4,000 entry windows and 10,962 stop windows of trades and NBBO quotes were downloaded, about 2.4 hours at Alpaca's rate limit. Nothing was run on 2024-2025.
+| Universe | Bars | Box | Trades | Strict: avg R | z | Years + | z vs opposite | Close rule: avg R | z | Gross R (strict) | Opposite avg R (strict) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| all9 | 5m | 0.25 | 2959 | -0.367 | -7.6 | 0 | +2.8 | -0.366 | -7.6 | -0.210 | -0.603 |
+| all9 | 5m | 0.22 | 3247 | -0.390 | -8.4 | 0 | +2.8 | -0.388 | -8.4 | -0.226 | -0.614 |
+| all9 | 1m | 0.25 | 7180 | -0.837 | -18.4 | 0 | +11.4 | -0.754 | -15.4 | -0.497 | -1.691 |
+| all9 | 1m | 0.22 | 7879 | -0.862 | -19.8 | 0 | +12.4 | -0.780 | -16.8 | -0.511 | -1.744 |
+| all9 | 2m | 0.25 | 5735 | -0.648 | -15.9 | 0 | +6.7 | -0.630 | -15.2 | -0.401 | -1.128 |
+| all9 | 2m | 0.22 | 6286 | -0.678 | -17.2 | 0 | +7.0 | -0.659 | -16.5 | -0.421 | -1.162 |
+| all9 | 3m | 0.25 | 4589 | -0.537 | -13.2 | 0 | +3.1 | -0.533 | -13.0 | -0.339 | -0.765 |
+| all9 | 3m | 0.22 | 5031 | -0.551 | -14.1 | 0 | +3.7 | -0.544 | -13.8 | -0.347 | -0.813 |
+| spy | 5m | 0.25 | 192 | -0.994 | -6.8 | 0 | +0.5 | -0.994 | -6.8 | -0.668 | -1.127 |
+| spy | 5m | 0.22 | 254 | -1.077 | -8.4 | 0 | +0.9 | -1.077 | -8.4 | -0.717 | -1.288 |
+| spy | 1m | 0.25 | 477 | -1.688 | -10.9 | 0 | +9.1 | -1.600 | -9.8 | -0.973 | -3.754 |
+| spy | 1m | 0.22 | 629 | -1.642 | -11.6 | 0 | +11.3 | -1.552 | -10.4 | -0.894 | -3.925 |
+| spy | 2m | 0.25 | 397 | -1.383 | -10.3 | 0 | +4.8 | -1.383 | -10.3 | -0.868 | -2.429 |
+| spy | 2m | 0.22 | 525 | -1.406 | -11.5 | 0 | +6.4 | -1.407 | -11.5 | -0.855 | -2.635 |
+| spy | 3m | 0.25 | 304 | -1.190 | -8.5 | 0 | +2.1 | -1.177 | -8.3 | -0.772 | -1.684 |
+| spy | 3m | 0.22 | 398 | -1.204 | -9.7 | 0 | +3.5 | -1.194 | -9.6 | -0.766 | -1.912 |
+| sip | 5m | 0.25 | 6124 | -0.209 | -7.2 | 0 | +4.6 | -0.203 | -6.9 | -0.108 | -0.428 |
+| sip | 5m | 0.22 | 6200 | -0.210 | -7.3 | 0 | +4.8 | -0.204 | -7.0 | -0.108 | -0.435 |
+| sip | 1m | 0.25 | 15043 | -0.483 | -11.4 | 0 | +11.9 | -0.383 | -7.6 | -0.219 | -1.262 |
+| sip | 1m | 0.22 | 15220 | -0.492 | -11.7 | 0 | +12.0 | -0.389 | -7.8 | -0.226 | -1.269 |
+| sip | 2m | 0.25 | 11824 | -0.319 | -11.0 | 0 | +10.2 | -0.298 | -9.8 | -0.153 | -0.781 |
+| sip | 2m | 0.22 | 11972 | -0.323 | -11.1 | 0 | +10.4 | -0.300 | -9.9 | -0.156 | -0.788 |
+| sip | 3m | 0.25 | 9398 | -0.245 | -8.6 | 0 | +7.4 | -0.234 | -8.1 | -0.112 | -0.633 |
+| sip | 3m | 0.22 | 9509 | -0.250 | -8.8 | 0 | +7.4 | -0.239 | -8.4 | -0.116 | -0.634 |
 
-## Pass bar by stop width
+Variants that would meet the single-universe bar: none.
 
-| Stop width | Tick sample: avg R (measured costs) | z | Years > 0 | vs opposite (z) | Bar set, strict: avg R | z | Years > 0 with z ≥ 3 | Years > 0 | vs opposite (z) | Verdict |
-|---|---|---|---|---|---|---|---|---|---|---|
-| 10% of ATR | +0.076 | +1.0 | 6/8 | +0.780 (+9.0) | -0.545 | -29.0 | 0/8 | 0/8 | +0.219 (+9.7) | FAIL |
-| 25% of ATR | +0.099 | +2.5 | 7/8 | +0.432 (+8.2) | -0.108 | -8.4 | 0/8 | 0/8 | +0.236 (+13.5) | FAIL |
-| 50% of ATR | +0.069 | +2.9 | 6/8 | +0.263 (+7.2) | -0.014 | -1.6 | 0/8 | 3/8 | +0.163 (+12.3) | FAIL |
+## By year (5-minute bars, box >= 0.25x ATR, strict rule)
 
-## By year (avg R after costs)
+| Universe | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 |
+|---|---|---|---|---|---|---|---|---|
+| all9 | -0.37 (381) | -0.59 (375) | -0.38 (358) | -0.53 (371) | -0.22 (315) | -0.40 (379) | -0.13 (395) | -0.30 (385) |
+| spy | -1.02 (30) | -1.84 (26) | -0.16 (20) | -1.49 (26) | -1.12 (10) | -0.64 (31) | -0.83 (30) | -0.76 (19) |
+| sip | -0.26 (703) | -0.27 (730) | -0.12 (757) | -0.09 (815) | -0.18 (735) | -0.22 (835) | -0.28 (782) | -0.27 (767) |
 
-| Year | Tick 10% | Tick 25% | Tick 50% | Bars strict 10% | Bars strict 25% | Bars strict 50% | Bars close-rule 10% | Bars close-rule 25% | Bars close-rule 50% |
-|---|---|---|---|---|---|---|---|---|---|
-| 2016 | +0.235 | +0.199 | +0.089 | -0.549 | -0.092 | -0.031 | -0.036 | -0.008 | -0.015 |
-| 2017 | +0.023 | +0.068 | +0.022 | -0.754 | -0.224 | -0.059 | -0.119 | -0.070 | -0.036 |
-| 2018 | +0.124 | +0.122 | +0.115 | -0.562 | -0.072 | +0.018 | +0.137 | +0.061 | +0.035 |
-| 2019 | +0.311 | +0.268 | +0.129 | -0.625 | -0.106 | -0.004 | +0.051 | +0.015 | +0.010 |
-| 2020 | -0.094 | -0.056 | -0.045 | -0.456 | -0.117 | -0.034 | -0.002 | -0.043 | -0.028 |
-| 2021 | +0.062 | +0.122 | +0.113 | -0.503 | -0.057 | +0.023 | +0.169 | +0.077 | +0.035 |
-| 2022 | +0.200 | +0.055 | +0.144 | -0.370 | -0.037 | +0.000 | +0.176 | +0.022 | +0.010 |
-| 2023 | -0.254 | +0.017 | -0.018 | -0.556 | -0.164 | -0.029 | -0.118 | -0.062 | -0.021 |
+## By pattern and side (5-minute bars, box >= 0.25x ATR, strict rule)
 
-## Tick sample: results by stop width
+| Universe | Pattern | Side | Trades | Avg R after costs | z | Gross R | Target / stop / close |
+|---|---|---|---|---|---|---|---|
+| all9 | engulfing | short | 1183 | -0.306 | -3.7 | -0.137 | 12.9% / 75.8% / 11.2% |
+| all9 | engulfing | long | 1047 | -0.372 | -4.9 | -0.235 | 12.5% / 75.5% / 12.0% |
+| all9 | hammer | short | 362 | -0.480 | -3.8 | -0.290 | 13.0% / 79.3% / 7.7% |
+| all9 | hammer | long | 367 | -0.435 | -3.9 | -0.298 | 12.5% / 77.7% / 9.8% |
+| spy | engulfing | short | 73 | -0.929 | -3.3 | -0.551 | 15.1% / 80.8% / 4.1% |
+| spy | engulfing | long | 70 | -0.987 | -5.4 | -0.732 | 15.7% / 78.6% / 5.7% |
+| spy | hammer | short | 26 | -0.809 | -1.6 | -0.403 | 19.2% / 76.9% / 3.8% |
+| spy | hammer | long | 23 | -1.434 | -4.6 | -1.141 | 4.3% / 95.7% / 0.0% |
+| sip | engulfing | short | 2111 | -0.246 | -5.2 | -0.143 | 7.7% / 72.1% / 20.2% |
+| sip | engulfing | long | 2256 | -0.175 | -3.5 | -0.081 | 7.4% / 73.0% / 19.5% |
+| sip | hammer | short | 858 | -0.178 | -2.3 | -0.067 | 10.3% / 71.7% / 18.1% |
+| sip | hammer | long | 899 | -0.237 | -3.1 | -0.132 | 9.1% / 76.5% / 14.3% |
 
-| Stop width | Trades | Before costs (R) | After measured costs (R) | Fees (R) | Stopped | Opposite direction after costs (R) | Bar set, close rule (R) | z | Bar set, strict (R) | z |
-|---|---|---|---|---|---|---|---|---|---|---|
-| 10% | 3981 | +0.083 | +0.076 | 0.0068 | 86% | -0.704 | +0.034 | +1.2 | -0.545 | -29.0 |
-| 25% | 3981 | +0.102 | +0.099 | 0.0027 | 68% | -0.333 | -0.001 | -0.0 | -0.108 | -8.4 |
-| 50% | 3981 | +0.070 | +0.069 | 0.0014 | 44% | -0.194 | -0.001 | -0.1 | -0.014 | -1.6 |
+## Trade shape and costs (5-minute bars, box >= 0.25x ATR)
 
-## Entry minute: stop touched before or after the fill
-
-| Stop width | Touched in the entry minute before the fill | After the fill (the trade is stopped there) | Touched only before |
-|---|---|---|---|
-| 10% | 42.7% | 21.9% | 30.2% |
-| 25% | 10.1% | 4.6% | 8.8% |
-| 50% | 1.4% | 0.8% | 1.3% |
-
-Fills after the entry minute (the first counted trade at the level came later than the bar suggests): 0.0%.
-
-## Spread and slippage by year
-
-| Year | Trades | Spread at fill (% of price) | Spread in R at 10% / 25% / 50% ATR | Entry slippage vs the level (% of price): mean / median | Stop slippage vs the stop (% of price): mean / median (stops) |
-|---|---|---|---|---|---|
-| 2016 | 500 | 0.167% | 0.39 / 0.16 / 0.08 | 0.034% / 0.008% | 0.033% / 0.028% (938) |
-| 2017 | 500 | 0.158% | 0.44 / 0.17 / 0.09 | 0.033% / 0.000% | 0.048% / 0.030% (983) |
-| 2018 | 497 | 0.177% | 0.39 / 0.16 / 0.08 | 0.041% / 0.000% | 0.070% / 0.034% (1003) |
-| 2019 | 499 | 0.197% | 0.41 / 0.16 / 0.08 | 0.041% / 0.011% | 0.062% / 0.035% (977) |
-| 2020 | 496 | 0.263% | 0.38 / 0.15 / 0.08 | 0.053% / 0.009% | 0.083% / 0.046% (1008) |
-| 2021 | 498 | 0.256% | 0.37 / 0.15 / 0.07 | 0.037% / 0.003% | 0.073% / 0.043% (1023) |
-| 2022 | 495 | 0.279% | 0.37 / 0.15 / 0.07 | 0.058% / 0.019% | 0.090% / 0.054% (931) |
-| 2023 | 496 | 0.216% | 0.37 / 0.15 / 0.07 | 0.056% / 0.015% | 0.112% / 0.041% (1024) |
-
-## Spread and slippage by price band
-
-| Band | Trades | Spread at fill (% of price) | Spread in R at 10% / 25% / 50% ATR | Entry slippage vs the level (% of price): mean / median | Stop slippage vs the stop (% of price): mean / median (stops) |
-|---|---|---|---|---|---|
-| $5-10 | 212 | 0.464% | 0.31 / 0.12 / 0.06 | 0.071% / 0.000% | 0.128% / 0.099% (402) |
-| $10-20 | 612 | 0.273% | 0.29 / 0.11 / 0.06 | 0.045% / 0.000% | 0.117% / 0.054% (1165) |
-| $20-50 | 1621 | 0.209% | 0.38 / 0.15 / 0.08 | 0.050% / 0.008% | 0.072% / 0.037% (3214) |
-| $50-100 | 935 | 0.164% | 0.46 / 0.19 / 0.09 | 0.036% / 0.014% | 0.048% / 0.029% (1884) |
-| $100+ | 601 | 0.157% | 0.44 / 0.18 / 0.09 | 0.030% / 0.010% | 0.047% / 0.030% (1222) |
-
-## Cost model for the bar set (means from the tick sample, % of price)
-
-| Price band | Sample trades | Entry slippage | Control entry slippage | Stop slippage | Control stop slippage | Spread |
+| Universe | Median R (% of price) | Median target distance (R) | Win rate (strict) | Exits: target / stop / close (strict) | Cost per trade (R): strict gross - net | Random-direction gap (R), z |
 |---|---|---|---|---|---|---|
-| $5-10 | 212 | 0.071% | 0.394% | 0.128% | 0.130% | 0.464% |
-| $10-20 | 612 | 0.045% | 0.228% | 0.117% | 0.093% | 0.273% |
-| $20-50 | 1621 | 0.050% | 0.159% | 0.072% | 0.069% | 0.209% |
-| $50-100 | 935 | 0.036% | 0.128% | 0.048% | 0.050% | 0.164% |
-| $100+ | 601 | 0.030% | 0.127% | 0.047% | 0.044% | 0.157% |
+| all9 | 0.27% | 4.63 | 22.1% | 12.7% / 76.3% / 10.9% | 0.156 | +0.137, +2.7 |
+| spy | 0.12% | 4.16 | 16.7% | 14.6% / 81.2% / 4.2% | 0.327 | +0.055, +0.3 |
+| sip | 0.61% | 5.73 | 24.6% | 8.2% / 73.0% / 18.8% | 0.101 | +0.134, +4.1 |
 
-## Practical checks (read-only, paper account and asset list, 2026-10-28)
+## Funnel (stock-days, 5-minute bars)
 
-- Paper account: equity $2,500; multiplier 4; buying power $10,000; Reg T (overnight) buying power $5,000; day-trading buying power field: not reported; pattern-day-trader flag: not reported.
-- Position size at 1% risk on $2,500 ($25 at risk), median over the tick sample: 10% ATR stop: $7,559; 25% ATR stop: $3,024; 50% ATR stop: $1,512 of stock, against $10,000 of intraday buying power.
-- Short trades in stocks Alpaca marks easy to borrow today: 86% of the sample's shorts (1992), 87% of all T13 shorts (16066); 7% of those symbols are no longer active on Alpaca. Historical borrow status is not available.
+| Universe | Stock-days | Flat box | Box < 0.22x ATR | No entry | Fill beyond stop/target | Trades (>= 0.22) | Trades (>= 0.25) |
+|---|---|---|---|---|---|---|---|
+| all9 | 18108 | 169 | 2246 | 12437 | 0 | 3247 | 2959 |
+| spy | 2012 | 8 | 888 | 861 | 0 | 254 | 192 |
+| sip | 39885 | 264 | 719 | 32700 | 0 | 6200 | 6124 |
 
 ## Method
 
-Tick replay. Trades that count are those that set the last sale: odd lots and out-of-sequence, average-price, derivatively priced, extended-hours, cash, next-day, seller's-option, bunched-sold, market-center open/close and prior-reference prints are left out (conditions B C G H I M N P Q R T U V W Z 4 7 9). Fill: the first such trade at or beyond the breakout level (the 9:30-9:35 high for longs, low for shorts, from 1-minute bars) from 9:35:00 on; the buy fills at the NBBO ask at that moment (the latest quote at or before the trade; the sell at the bid). Stop: the stop level is set from the actual fill; the first counted trade at or beyond it after the fill exits at the NBBO bid (ask for shorts). Otherwise the exit is the official closing price (Alpaca's daily close). Costs: $0 commission, plus on every sale the SEC Section 31 fee and FINRA's trading activity fee. The opposite-direction control enters at the same moment on the other side of the quote (sells at the bid for a long signal), with the same R, and is replayed the same way.
+python -m backtest.bench.t15 run --universe bench       # all9 and spy -> reports/bench/t15/bench.pkl
+    python -m backtest.bench.t15 run --universe sip         # T13 stocks-in-play top 20 -> reports/bench/t15/sip.pkl
+    python -m backtest.bench.t15 report --md full.md --compact compact.md --findings findings.md
+Box: the 9:30-9:45 candle (1-minute bars 9:30-9:44). It counts if its high-low range is at least 0.25x the
+14-day daily ATR (known before the open; 0.22x also reported). An up candle -> shorts above the box high only;
+a down candle -> longs below the box low only; a flat candle -> no trade. Signal bars: 5-minute bars (also 1, 2
+and 3), anchored at 9:45, that start at or after 9:45 and end by 11:00; earlier bars of the same size (from
+9:30) count as the bars before a signal. The signal bar must close outside the box (below the low for longs,
+above the high for shorts).
+Hammer (long): the two bars before it each closed lower than the bar before them; lower wick >= 2x body; upper
+wick <= body; close in the top third of the bar's range. Entry: the first later 1-minute bar that trades above
+the hammer's high; stop at its low. Inverted hammer (short): the mirror image.
+Bullish engulfing (long): a green bar whose body covers the previous bar's red body (open <= previous close,
+close >= previous open). Entry: the first later 1-minute bar that trades at the previous bar's high; stop at
+the engulfing bar's low. Bearish engulfing: the mirror image.
+A setup waits for its entry until 11:00 and is cancelled if a 1-minute bar touches its stop first. The trade
+is the setup whose entry comes first; one trade per stock-day. Fill: the entry level, or the minute's open if
+it opens beyond it, plus the T14 calibrated entry slippage for the price band. R = fill - stop (before
+slippage). Target: the box's far side (the high for longs, the low for shorts), a limit order filled at that
+price with no extra cost. Stop: at the stop, or the minute's open if it opens through, minus the T14
+calibrated stop slippage. If a minute touches both, the stop counts. Otherwise the exit is the close of the
+15:59 bar. Fees: the SEC and FINRA sale fees (T14). Entry minute: "close" counts it as stopped only if it
+closes beyond the stop, "strict" counts any touch; the target counts there only on a close beyond it.
+Controls: the same stock, moment and R in the opposite direction (target mirrored at the same distance, with
+T14's control slippage, i.e. the other side of the quote); and a random direction (seed fixed).
+Prices: all9/spy use the bench's split-adjusted bars converted to the day's actual prices (Alpaca's daily
+raw close / adjusted close; SPY and QQQ had no splits); the price band uses actual prices. FOMC days are kept.
 
-Bar set: every T13 Part A trade, replayed on 1-minute bars with costs calibrated from the tick sample by price band (mean entry slippage vs the breakout level, mean stop slippage vs the stop, both as % of price, for the signal and the control separately), the official close, and the same fees. Both entry-minute rules: "close" (the entry minute counts as stopped only if it closes beyond the stop) and "strict" (any touch).
+Costs (T14, from 4,000 tick-replayed trades): mean entry slippage beyond the level and mean stop slippage, as % of price, by price band ($5-10 to $100+), separately for the signal side and for the opposite side at the same moment. Statistics: standard errors clustered by day. Bench symbols: the first 14 sessions of 2016 have no ATR (no 2015 data), so they are skipped.
 
 ---
 
-Full per-trade tables: [history/2026-10-28-t14-measurement.md](history/2026-10-28-t14-measurement.md)
+Full per-trade tables: [history/2026-10-29-t15-quick-flip.md](history/2026-10-29-t15-quick-flip.md)
