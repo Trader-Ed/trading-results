@@ -48,8 +48,6 @@ Recomputing every trade's R with no edge reproduces T13's stored values to withi
 
 ## Method
 
-python -m backtest.bench.t17 signals        # planted direction edges + pure noise -> reports/bench/t17/signals.pkl
-    python -m backtest.bench.t17 report --md out.md
 Planted direction edges: signals at random moments on all9 (a random symbol, a random research day that is
 not an FOMC day, a random whole decision minute in the T10 entry window 9:35-11:50). The direction is set
 from the ACTUAL move to +30 minutes, for this audit only: with probability p it is the direction the stock
